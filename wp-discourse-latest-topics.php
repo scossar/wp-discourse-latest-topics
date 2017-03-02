@@ -19,8 +19,10 @@ function init() {
 
 		require_once( __DIR__ . '/lib/discourse-latest-topics.php' );
 		require_once( __DIR__ . '/lib/discourse-latest-shortcode.php' );
+		require_once( __DIR__ . '/lib/topic-formatter.php' );
 
-		$latest_topics = new LatestTopics();
+		$topic_formatter = new TopicFormatter();
+		$latest_topics = new LatestTopics( $topic_formatter );
 		new DiscourseLatestShortcode( $latest_topics );
 
 		// Only load admin files in admin.

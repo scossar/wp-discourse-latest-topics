@@ -25,6 +25,14 @@ class LatestTopics {
 	protected $options;
 
 	/**
+	 * An instance of the TopicFormatter class.
+	 *
+	 * @access protected
+	 * @var TopicFormatter
+	 */
+	protected $topic_formatter;
+
+	/**
 	 * The Discourse forum url.
 	 *
 	 * @access protected
@@ -49,7 +57,9 @@ class LatestTopics {
 	/**
 	 * LatestTopics constructor.
 	 */
-	public function __construct() {
+	public function __construct( $topic_formatter ) {
+		$this->topic_formatter = $topic_formatter;
+
 		add_action( 'init', array( $this, 'initialize_plugin' ) );
 		add_filter( 'wpdc_utilities_options_array', array( $this, 'add_options' ) );
 		add_action( 'rest_api_init', array( $this, 'initialize_topic_route' ) );
@@ -74,9 +84,9 @@ class LatestTopics {
 			wp_enqueue_style( 'dclt_styles' );
 			wp_register_script( 'dclt_js', plugins_url( '/js/discourse-latest.js', __FILE__ ), array( 'jquery' ), true );
 			$data = array(
-				'latestURL' => home_url( '/wp-json/wp-discourse/v1/latest-topics'),
+				'latestURL' => home_url( '/wp-json/wp-discourse/v1/latest-topics' ),
 			);
-			write_log($data);
+
 			wp_enqueue_script( 'dclt_js' );
 			wp_localize_script( 'dclt_js', 'dclt', $data );
 		}
@@ -165,21 +175,25 @@ class LatestTopics {
 		$force            = ! empty( $plugin_options['dclt_clear_topics_cache'] ) ? $plugin_options['dclt_clear_topics_cache'] : 0;
 
 		if ( empty( $discourse_topics ) || $force ) {
-
 			$discourse_topics = $this->latest_topics();
-			$cache_duration   = ! empty( $plugin_options['dclt_cache_duration'] ) ? $plugin_options['dclt_cache_duration'] : 10;
-
-			// Todo: This could be set to null. Something needs to happen here.
-			set_transient( 'dclt_latest_topics', $discourse_topics, $cache_duration * MINUTE_IN_SECONDS );
-
-			if ( $force ) {
-				$plugin_options['dclt_clear_topics_cache'] = 0;
-
-				update_option( $this->option_key, $plugin_options );
-			}
 		}
 
-		return $discourse_topics;
+		$cache_duration = ! empty( $plugin_options['dclt_cache_duration'] ) ? $plugin_options['dclt_cache_duration'] : 10;
+
+		// Todo: This could be set to null. Something needs to happen here.
+		set_transient( 'dclt_latest_topics', $discourse_topics, $cache_duration * MINUTE_IN_SECONDS );
+
+		// Allow this to be set by the GET request or the shortcode.
+		$formatted_topics = $this->topic_formatter->format_topics( $discourse_topics, array( 'max_topics'      => 5,
+		                                                                                     'display_avatars' => 'true',
+		) );
+		if ( $force ) {
+			$plugin_options['dclt_clear_topics_cache'] = 0;
+
+			update_option( $this->option_key, $plugin_options );
+		}
+
+		return $formatted_topics;
 	}
 
 	/**
