@@ -4,7 +4,7 @@ namespace WPDiscourse\LatestTopics;
 
 use WPDiscourse\Utilities\Utilities as DiscourseUtilities;
 
-class DiscourseLatestShortcode {
+class Shortcode {
 	/**
 	 * The plugin options.
 	 *

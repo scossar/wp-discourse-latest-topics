@@ -18,12 +18,12 @@ function init() {
 	if ( class_exists( '\WPDiscourse\Discourse\Discourse' ) ) {
 
 		require_once( __DIR__ . '/lib/discourse-latest-topics.php' );
-		require_once( __DIR__ . '/lib/discourse-latest-shortcode.php' );
+		require_once( __DIR__ . '/lib/shortcode.php' );
 		require_once( __DIR__ . '/lib/topic-formatter.php' );
 
 		$topic_formatter = new TopicFormatter();
 		$latest_topics = new LatestTopics( $topic_formatter );
-		new DiscourseLatestShortcode( $latest_topics );
+		new Shortcode( $latest_topics );
 
 		// Only load admin files in admin.
 		if ( is_admin() ) {
