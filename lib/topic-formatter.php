@@ -4,67 +4,24 @@ namespace WPDiscourse\LatestTopics;
 
 use WPDiscourse\Utilities\Utilities as DiscourseUtilities;
 
-class DiscourseLatestShortcode {
-	/**
-	 * The plugin options.
-	 *
-	 * @access protected
-	 * @var array
-	 */
+class TopicFormatter {
 	protected $options;
+	protected static $instance;
 
-	/**
-	 * The Discourse forum URL.
-	 *
-	 * @access protected
-	 * @var string
-	 */
-	protected $discourse_url;
+	public static function get_instance() {
+		if ( null === self::$instance ) {
+			self::$instance = new self();
+		}
 
-	/**
-	 * An instance of the LatestTopics class.
-	 *
-	 * @access protected
-	 * @var LatestTopics
-	 */
-	protected $latest_topics;
-
-	/**
-	 * DiscourseLatestShortcode constructor.
-	 *
-	 * @param LatestTopics $latest_topics An instance of the LatestTopics class.
-	 */
-	public function __construct( $latest_topics ) {
-		$this->latest_topics = $latest_topics;
-
-		add_action( 'init', array( $this, 'setup_options' ) );
-		add_shortcode( 'discourse_latest', array( $this, 'discourse_latest' ) );
+		return self::$instance;
 	}
 
-	/**
-	 * Set the plugin options.
-	 */
+	protected function __construct() {
+		add_action( 'init', array( $this, 'setup_options' ) );
+	}
+
 	public function setup_options() {
 		$this->options = DiscourseUtilities::get_options();
-	}
-
-	/**
-	 * Create the shortcode.
-	 *
-	 * @param array $atts The shortcode attributes.
-	 *
-	 * @return string
-	 */
-	public function discourse_latest( $atts ) {
-
-		$attributes = shortcode_atts( array(
-			'max_topics' => 5,
-			'display_avatars' => 'true',
-		), $atts );
-
-		$discourse_topics = $this->latest_topics->get_latest_topics();
-
-		return $this->format_topics( $discourse_topics, $attributes );
 	}
 
 	/**
@@ -208,4 +165,6 @@ class DiscourseLatestShortcode {
 
 		return 1 === $years ? '1 year ago' : $years . ' years ago';
 	}
+
+
 }

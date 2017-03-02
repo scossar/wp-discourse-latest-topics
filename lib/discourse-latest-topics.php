@@ -72,6 +72,13 @@ class LatestTopics {
 		if ( ! empty( $this->options['dclt_use_default_styles'] ) && 1 === intval( $this->options['dclt_use_default_styles'] ) ) {
 			wp_register_style( 'dclt_styles', plugins_url( '/css/styles.css', __FILE__ ) );
 			wp_enqueue_style( 'dclt_styles' );
+			wp_register_script( 'dclt_js', plugins_url( '/js/discourse-latest.js', __FILE__ ), array( 'jquery' ), true );
+			$data = array(
+				'latestURL' => home_url( '/wp-json/wp-discourse/v1/latest-topics'),
+			);
+			write_log($data);
+			wp_enqueue_script( 'dclt_js' );
+			wp_localize_script( 'dclt_js', 'dclt', $data );
 		}
 	}
 
