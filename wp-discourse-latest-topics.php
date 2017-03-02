@@ -17,7 +17,7 @@ add_action( 'plugins_loaded', __NAMESPACE__ . '\\init' );
 function init() {
 	if ( class_exists( '\WPDiscourse\Discourse\Discourse' ) ) {
 
-		require_once( __DIR__ . '/lib/discourse-latest-topics.php' );
+		require_once( __DIR__ . '/lib/latest-topics.php' );
 		require_once( __DIR__ . '/lib/shortcode.php' );
 		require_once( __DIR__ . '/lib/topic-formatter.php' );
 
