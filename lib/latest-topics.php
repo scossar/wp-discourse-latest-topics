@@ -33,14 +33,6 @@ class LatestTopics {
 	protected $topic_formatter;
 
 	/**
-	 * The Discourse forum url.
-	 *
-	 * @access protected
-	 * @var string
-	 */
-	protected $discourse_url;
-
-	/**
 	 * The options array added by this plugin.
 	 *
 	 * @access protected
@@ -52,10 +44,14 @@ class LatestTopics {
 		'dclt_webhook_secret'     => '',
 		'dclt_clear_topics_cache' => 0,
 		'dclt_use_default_styles' => 1,
+		'dclt_ajax_load' => 0,
+		'dclt_ajax_timeout' => '120',
 	);
 
 	/**
 	 * LatestTopics constructor.
+	 *
+	 * @param TopicFormatter $topic_formatter An instance of TopicFormatter.
 	 */
 	public function __construct( $topic_formatter ) {
 		$this->topic_formatter = $topic_formatter;
@@ -71,8 +67,7 @@ class LatestTopics {
 	 */
 	public function initialize_plugin() {
 		add_option( 'dclt_options', $this->dclt_options );
-		$this->options       = DiscourseUtilities::get_options();
-		$this->discourse_url = ! empty( $this->options['url'] ) ? $this->options['url'] : null;
+		$this->options = DiscourseUtilities::get_options();
 	}
 
 	/**
@@ -167,31 +162,33 @@ class LatestTopics {
 	/**
 	 * Get the latest topics from either from the stored transient, or from Discourse.
 	 *
-	 * @return array
+	 * @return string
 	 */
 	public function get_latest_topics() {
 		$discourse_topics = get_transient( 'dclt_latest_topics' );
 		$plugin_options   = get_option( $this->option_key );
 		$force            = ! empty( $plugin_options['dclt_clear_topics_cache'] ) ? $plugin_options['dclt_clear_topics_cache'] : 0;
 
-		if ( empty( $discourse_topics ) || $force ) {
-			$discourse_topics = $this->latest_topics();
-		}
-
-		$cache_duration = ! empty( $plugin_options['dclt_cache_duration'] ) ? $plugin_options['dclt_cache_duration'] : 10;
-
-		// Todo: This could be set to null. Something needs to happen here.
-		set_transient( 'dclt_latest_topics', $discourse_topics, $cache_duration * MINUTE_IN_SECONDS );
-
-		// Allow this to be set by the GET request or the shortcode.
-		$formatted_topics = $this->topic_formatter->format_topics( $discourse_topics, array( 'max_topics'      => 5,
-		                                                                                     'display_avatars' => 'true',
-		) );
+		// The 'dclt_clear_topics_cache' option is only used for a single request, this resets it.
 		if ( $force ) {
 			$plugin_options['dclt_clear_topics_cache'] = 0;
 
 			update_option( $this->option_key, $plugin_options );
 		}
+
+		// This should only happen if 'dclt_webhook_refresh' is not set, or if something has gone wrong with the webhook refresh.
+		if ( empty( $discourse_topics ) || $force ) {
+			$discourse_topics = $this->latest_topics();
+
+			$cache_duration = ! empty( $plugin_options['dclt_cache_duration'] ) ? $plugin_options['dclt_cache_duration'] : 10;
+			set_transient( 'dclt_latest_topics', $discourse_topics, $cache_duration * MINUTE_IN_SECONDS );
+		}
+
+		// Allow this to be set by the GET request or the shortcode.
+		$formatted_topics = $this->topic_formatter->format_topics( $discourse_topics, array(
+			'max_topics'      => 5,
+			'display_avatars' => 'true',
+		) );
 
 		return $formatted_topics;
 	}
@@ -199,15 +196,17 @@ class LatestTopics {
 	/**
 	 * Gets the latest topics from Discourse.
 	 *
-	 * @return array|mixed|null|object
+	 * @return array|null
 	 */
 	protected function latest_topics() {
-		if ( empty( $this->discourse_url ) ) {
+		$discourse_url = ! empty( $this->options['url'] ) ? $this->options['url'] : null;
+
+		if ( ! $discourse_url ) {
 
 			return null;
 		}
 
-		$latest_url = esc_url( $this->discourse_url . '/latest.json' );
+		$latest_url = esc_url( $discourse_url . '/latest.json' );
 
 		$remote = wp_remote_get( $latest_url );
 
