@@ -69,9 +69,9 @@ class TopicFormatter {
 			if ( 'true' === $args['display_avatars'] ) {
 				$output .= apply_filters( 'dclt_shorcodes_avatar', $avatar_image, esc_url( $poster_avatar_url ) );
 			}
-			$output .= '<span class="dclt-username">' . esc_html( $poster_username ) . '</span>' . '<span class="dclt-term"> posted on </span>
+			$output .= '<span class="dclt-username">' . esc_html( $poster_username ) . '</span>' . '<span class="dclt-term">'. __( ' posted on', 'dclt' ) . '</span>
 						<span class="dclt-created-at">' . $created_at_formatted . '</span><br>
-						<span class="dclt-term">in </span><span class="dclt-shortcode-category" >' . $this->discourse_category_badge( $category ) . '</span></div>
+						<span class="dclt-term">' . __( 'in ', 'dclt' ) . '</span><span class="dclt-shortcode-category" >' . $this->discourse_category_badge( $category ) . '</span></div>
 						<p class="dclt-topic-title"><a href="' . esc_url( $topic_url ) . '">' . esc_html( $topic['title'] ) . '</a></p>
 						<p class="dclt-topic-activity-meta"><span class="dclt-term">replies</span> <span class="dclt-num-replies">' .
 			           esc_attr( ( $topic['posts_count'] ) - 1 ) .
@@ -134,27 +134,27 @@ class TopicFormatter {
 
 		$minutes = intval( $seconds / 60 );
 		if ( $minutes < 60 ) {
-			return 1 === $minutes ? '1 minute ago' : $minutes . ' minutes ago';
+			return 1 === $minutes ? __( '1 minute ago', 'dclt' ) : $minutes . __( ' minutes ago', 'dclt' );
 		}
 
 		$hours = intval( $minutes / 60 );
 		if ( $hours < 24 ) {
-			return 1 === $hours ? '1 hour ago' : $hours . ' hours ago';
+			return 1 === $hours ? __( '1 hour ago', 'dclt' ) : $hours . __( ' hours ago', 'dclt' );
 		}
 
 		$days = intval( $hours / 24 );
 		if ( $days < 30 ) {
-			return 1 === $days ? '1 day ago' : $days . ' days ago';
+			return 1 === $days ? __( '1 day ago', 'dclt' ) : $days . __( ' days ago', 'dclt' );
 		}
 
 		$months = intval( $days / 30 );
 		if ( $months < 12 ) {
-			return 1 === $months ? '1 month ago' : $months . ' months ago';
+			return 1 === $months ? __( '1 month ago', 'dclt' ) : $months . __( ' months ago', 'dclt' );
 		}
 
 		$years = intval( $months / 12 );
 
-		return 1 === $years ? '1 year ago' : $years . ' years ago';
+		return 1 === $years ? __( '1 year ago', 'dclt' ) : $years . __( ' years ago', 'dclt' );
 	}
 
 
