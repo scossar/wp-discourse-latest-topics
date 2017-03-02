@@ -82,7 +82,6 @@ class Admin {
 			'latest_topics_settings_details',
 		), 'dclt_options' );
 
-
 		add_settings_field( 'dclt_cache_duration', __( 'Topics Cache Duration', 'dclt' ), array(
 			$this,
 			'cache_duration_input',
@@ -96,6 +95,16 @@ class Admin {
 		add_settings_field( 'dclt_webhook_secret', __( 'Discourse Webhook Secret Key', 'dclt' ), array(
 		        $this,
             'webhook_secret_input',
+        ), 'dclt_options', 'dclt_settings_section' );
+
+		add_settings_field( 'dclt_ajax_load', __( 'Ajax Load', 'dclt' ), array(
+		        $this,
+            'ajax_load_checkbox',
+        ), 'dclt_options', 'dclt_settings_section' );
+
+		add_settings_field( 'dclt_ajax_timeout', __( 'Ajax Refresh Period', 'dclt' ), array(
+		        $this,
+            'ajax_timeout_input',
         ), 'dclt_options', 'dclt_settings_section' );
 
 		add_settings_field( 'dclt_use_default_styles', __( 'Use Default Styles', 'dclt' ), array(
@@ -245,4 +254,19 @@ class Admin {
 		$this->form_helper->input( 'dclt_cache_duration', 'dclt_options', __( 'Time in minutes to cache Discourse Topics.
 		This value will be ignored if you enable a webhook from Discourse.', 'dclt' ), 'number', 0 );
 	}
+
+	/**
+	 * Displays the ajax_load_checkbox field.
+	 */
+	public function ajax_load_checkbox() {
+	    $this->form_helper->checkbox_input( 'dclt_ajax_load', 'dclt_options', __( 'Use an ajax request to load topics on the front end', 'dclt' ) );
+    }
+
+	/**
+	 * Displays the ajax_timeout_input field.
+	 */
+    public function ajax_timeout_input() {
+        $this->form_helper->input( 'dclt_ajax_timeout', 'dclt_options', __( 'Ajax refresh period in seconds (minimum value: 60, default: 120).', 'dclt' ),
+            'number', 60 );
+    }
 }
