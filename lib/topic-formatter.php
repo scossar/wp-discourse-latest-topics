@@ -69,7 +69,7 @@ class TopicFormatter {
 			if ( 'true' === $args['display_avatars'] ) {
 				$output .= apply_filters( 'dclt_shorcodes_avatar', $avatar_image, esc_url( $poster_avatar_url ) );
 			}
-			$output .= '<span class="dclt-username">' . esc_html( $poster_username ) . '</span>' . '<span class="dclt-term">'. __( ' posted on', 'dclt' ) . '</span>
+			$output .= '<span class="dclt-username">' . esc_html( $poster_username ) . '</span>' . '<span class="dclt-term">' . __( ' posted on', 'dclt' ) . '</span>
 						<span class="dclt-created-at">' . $created_at_formatted . '</span><br>
 						<span class="dclt-term">' . __( 'in ', 'dclt' ) . '</span><span class="dclt-shortcode-category" >' . $this->discourse_category_badge( $category ) . '</span></div>
 						<p class="dclt-topic-title"><a href="' . esc_url( $topic_url ) . '">' . esc_html( $topic['title'] ) . '</a></p>
@@ -92,12 +92,14 @@ class TopicFormatter {
 	 * @return null
 	 */
 	protected function find_discourse_category( $topic ) {
-		$categories  = DiscourseUtilities::get_discourse_categories();
+		$categories = DiscourseUtilities::get_discourse_categories();
 		$category_id = $topic['category_id'];
 
-		foreach ( $categories as $category ) {
-			if ( $category_id === $category['id'] ) {
-				return $category;
+		if ( ! is_wp_error( $categories ) ) {
+			foreach ( $categories as $category ) {
+				if ( $category_id === $category['id'] ) {
+					return $category;
+				}
 			}
 		}
 
