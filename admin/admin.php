@@ -125,7 +125,7 @@ class Admin {
 	 * Adds the latest_topics sub-menu page to the 'wp_discourse_options' menu page.
 	 */
 	public function add_latest_topics_page() {
-		$latest_topics_settings = add_submenu_page(
+		add_submenu_page(
 		// The parent page from the wp-discourse plugin.
 			'wp_discourse_options',
 			__( 'Latest Topics', 'dclt' ),
@@ -134,8 +134,6 @@ class Admin {
 			'dclt_options',
 			array( $this, 'dclt_options_page' )
 		);
-		// This is optional, it checks the connection status with Discourse after saving the settings page.
-		add_action( 'load-' . $latest_topics_settings, array( $this->form_helper, 'connection_status_notice' ) );
 	}
 
 	/**
