@@ -19,13 +19,13 @@ class SettingsValidator {
 	 * SettingsValidator constructor.
 	 */
 	public function __construct() {
-		add_filter( 'wpdc_validate_dclt_clear_topics_cache', array( $this, 'validate_checkbox' ) );
-		add_filter( 'wpdc_validate_dclt_use_default_styles', array( $this, 'validate_checkbox' ) );
 		add_filter( 'wpdc_validate_dclt_cache_duration', array( $this, 'validate_int' ) );
 		add_filter( 'wpdc_validate_dclt_webhook_refresh', array( $this, 'validate_webhook_request' ) );
 		add_filter( 'wpdc_validate_dclt_webhook_secret', array( $this, 'validate_webhook_secret' ) );
 		add_filter( 'wpdc_validate_dclt_ajax_load', array( $this, 'validate_checkbox' ) );
 		add_filter( 'wpdc_validate_dclt_ajax_timeout', array( $this, 'validate_int' ) );
+		add_filter( 'wpdc_validate_dclt_use_default_styles', array( $this, 'validate_checkbox' ) );
+		add_filter( 'wpdc_validate_dclt_clear_topics_cache', array( $this, 'validate_checkbox' ) );
 	}
 
 	public function validate_checkbox( $input ) {
@@ -38,9 +38,10 @@ class SettingsValidator {
 	}
 
 	public function validate_webhook_request( $input ) {
-		$this->webhook_refresh = true;
+		$val = $this->validate_checkbox( $input );
+		$this->webhook_refresh = 1 === $val ? true : false;
 
-		return $this->validate_checkbox( $input );
+		return $val;
 	}
 
 	public function validate_webhook_secret( $input ) {
