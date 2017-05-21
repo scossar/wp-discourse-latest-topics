@@ -158,6 +158,4 @@ class TopicFormatter {
 
 		return 1 === $years ? __( '1 year ago', 'dclt' ) : $years . __( ' years ago', 'dclt' );
 	}
-
-
 }
