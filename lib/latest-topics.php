@@ -71,18 +71,20 @@ class LatestTopics {
 	}
 
 	/**
-	 * Enqueue styles.
+	 * Enqueue styles and scripts.
 	 */
 	public function plugin_scripts() {
 		if ( ! empty( $this->options['dclt_use_default_styles'] ) && 1 === intval( $this->options['dclt_use_default_styles'] ) ) {
 			wp_register_style( 'dclt_styles', plugins_url( '/css/styles.css', __FILE__ ) );
 			wp_enqueue_style( 'dclt_styles' );
+		}
+
+		if ( ! empty( $this->options['dclt_ajax_load']) && 1 === intval( $this->options['dclt_ajax_load'])) {
 			wp_register_script( 'dclt_js', plugins_url( '/js/discourse-latest.js', __FILE__ ), array( 'jquery' ), true );
 			$data = array(
 				'latestURL' => home_url( '/wp-json/wp-discourse/v1/latest-topics' ),
 				'ajaxTimeout' => $this->options['dclt_ajax_timeout'],
 			);
-
 			wp_enqueue_script( 'dclt_js' );
 			wp_localize_script( 'dclt_js', 'dclt', $data );
 		}
