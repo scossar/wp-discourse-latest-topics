@@ -259,9 +259,10 @@ class Admin {
 
 	/**
 	 * Displays the ajax_timeout_input field.
+     * Todo: reset the min value to a sane number (60?). I've reduced it for testing.
 	 */
     public function ajax_timeout_input() {
         $this->form_helper->input( 'dclt_ajax_timeout', 'dclt_options', __( 'Ajax refresh period in seconds (minimum value: 60, default: 120).', 'dclt' ),
-            'number', 60 );
+            'number', 10 );
     }
 }

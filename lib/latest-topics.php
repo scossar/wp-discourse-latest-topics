@@ -45,7 +45,7 @@ class LatestTopics {
 		'dclt_clear_topics_cache' => 0,
 		'dclt_use_default_styles' => 1,
 		'dclt_ajax_load' => 0,
-		'dclt_ajax_timeout' => '120',
+		'dclt_ajax_timeout' => 120,
 	);
 
 	/**
@@ -80,6 +80,7 @@ class LatestTopics {
 			wp_register_script( 'dclt_js', plugins_url( '/js/discourse-latest.js', __FILE__ ), array( 'jquery' ), true );
 			$data = array(
 				'latestURL' => home_url( '/wp-json/wp-discourse/v1/latest-topics' ),
+				'ajaxTimeout' => $this->options['dclt_ajax_timeout'],
 			);
 
 			wp_enqueue_script( 'dclt_js' );
@@ -92,7 +93,6 @@ class LatestTopics {
 	 *
 	 * This function merges the plugins options with the options array that is created in
 	 * WPDiscourse\Utilities\Utilities::get_options. Doing this makes it possible to use the FormHelper function in the plugin.
-	 * If you aren't using the FormHelper function, there is no need to do this.
 	 *
 	 * @param array $wpdc_options The unfiltered Discourse options.
 	 *
