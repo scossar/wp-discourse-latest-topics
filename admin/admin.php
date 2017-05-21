@@ -194,11 +194,15 @@ class Admin {
 	}
 
 	/**
+	 * Displays the cache_duration_input field.
+	 */
+	public function cache_duration_input() {
+		$this->form_helper->input( 'dclt_cache_duration', 'dclt_options', __( 'Time in minutes to cache Discourse Topics.
+		This value will be ignored if you enable a webhook from Discourse.', 'dclt' ), 'number', 0 );
+	}
+
+	/**
 	 * Displays the webhook_refresh_checkbox field.
-     *
-     * This, and all the other settings fields functions, use the FormHelper methods to create the form elements.
-     * Using the FormHelper methods is optional. If they are used, you need to be certain that your plugin options are
-     * being added to the array returned by DiscourseUtilities::get_options. See discourse-latest-topics.php for details.
 	 */
 	public function webhook_refresh_checkbox() {
 		$wordpress_url = home_url( '/wp-json/wp-discourse/v1/latest-topics' );
@@ -247,13 +251,6 @@ class Admin {
 		$this->form_helper->checkbox_input( 'dclt_use_default_styles', 'dclt_options', __( 'Use the default plugin styles.', 'dclt' ) );
 	}
 
-	/**
-	 * Displays the cache_duration_input field.
-	 */
-	public function cache_duration_input() {
-		$this->form_helper->input( 'dclt_cache_duration', 'dclt_options', __( 'Time in minutes to cache Discourse Topics.
-		This value will be ignored if you enable a webhook from Discourse.', 'dclt' ), 'number', 0 );
-	}
 
 	/**
 	 * Displays the ajax_load_checkbox field.
