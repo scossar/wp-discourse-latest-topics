@@ -149,9 +149,8 @@ class LatestTopics {
 		$data = $this->verify_discourse_request( $data );
 
 		if ( is_wp_error( $data ) ) {
-			error_log( $data->get_error_message() );
 
-			return null;
+			return new \WP_Error( 'dclt_webhook_error', $data->get_error_message() );
 		}
 
 		$latest = $this->latest_topics();
@@ -178,11 +177,10 @@ class LatestTopics {
 			update_option( $this->option_key, $plugin_options );
 		}
 
-		// This should only happen if 'dclt_webhook_refresh' is not set, or if something has gone wrong with the webhook refresh.
 		if ( empty( $discourse_topics ) || $force ) {
 			$discourse_topics = $this->latest_topics();
-
 			$cache_duration = ! empty( $plugin_options['dclt_cache_duration'] ) ? $plugin_options['dclt_cache_duration'] : 10;
+
 			set_transient( 'dclt_latest_topics', $discourse_topics, $cache_duration * MINUTE_IN_SECONDS );
 		}
 
